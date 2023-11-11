@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -22,8 +24,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ActivitySignUpBinding binding;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDbRef;
+    @Inject
+    public FirebaseAuth mAuth;
+    @Inject
+    public DatabaseReference mDbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

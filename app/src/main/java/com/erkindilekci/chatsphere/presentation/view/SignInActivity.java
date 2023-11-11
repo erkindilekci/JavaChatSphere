@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.erkindilekci.chatsphere.databinding.ActivitySignInBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -19,15 +21,14 @@ public class SignInActivity extends AppCompatActivity {
 
     private ActivitySignInBinding binding;
 
-    private FirebaseAuth mAuth;
+    @Inject
+    public FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
             Intent intent = new Intent(this, MainActivity.class);

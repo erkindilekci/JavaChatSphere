@@ -1,5 +1,7 @@
 package com.erkindilekci.chatsphere.di;
 
+import android.content.Context;
+
 import com.erkindilekci.chatsphere.data.repository.ChatRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -10,6 +12,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
 @Module
@@ -36,7 +39,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public ChatRepository provideChatRepository(FirebaseAuth mAuth, DatabaseReference mDbRef) {
-        return new ChatRepository(mAuth, mDbRef);
+    public ChatRepository provideChatRepository(FirebaseAuth mAuth, DatabaseReference mDbRef, @ApplicationContext Context context) {
+        return new ChatRepository(mAuth, mDbRef, context);
     }
 }

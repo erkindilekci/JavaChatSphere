@@ -1,10 +1,15 @@
 package com.erkindilekci.chatsphere.data.repository;
 
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.erkindilekci.chatsphere.data.model.Message;
 import com.erkindilekci.chatsphere.data.model.User;
+import com.erkindilekci.chatsphere.presentation.view.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,12 +30,15 @@ public class ChatRepository {
     private FirebaseAuth mAuth;
     private DatabaseReference mDbRef;
 
+    private Context context;
+
     @Inject
-    public ChatRepository(FirebaseAuth mAuth, DatabaseReference mDbRef) {
+    public ChatRepository(FirebaseAuth mAuth, DatabaseReference mDbRef, Context context) {
         userList = new MutableLiveData<>();
         messageList = new MutableLiveData<>();
         this.mAuth = mAuth;
         this.mDbRef = mDbRef;
+        this.context = context;
     }
 
     public MutableLiveData<List<User>> getUserList() {
@@ -93,7 +101,47 @@ public class ChatRepository {
                 });
     }
 
+    public void signUp(String name, String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        mDbRef.child("user").child(mAuth.getCurrentUser().getUid()).setValue(new User(name, email, mAuth.getCurrentUser().getUid()));
+
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intent);
+                    } else {
+                        Toast.makeText(
+                                context,
+                                "Error: " + task.getException().getLocalizedMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                });
+    }
+
+    public void signIn(String email, String password) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        context.startActivity(intent);
+                    } else {
+                        Toast.makeText(
+                                context,
+                                "Error: " + task.getException().getLocalizedMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                });
+    }
+
     public void signOut() {
         mAuth.signOut();
+    }
+
+    public boolean checkCurrentUser() {
+        return mAuth.getCurrentUser() != null;
     }
 }
